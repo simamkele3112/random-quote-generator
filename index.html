@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="image copy.png">
+    <meta property="og:title" content="Random Quote Generator">
+    <meta property="og:description" content="Generate inspirational quotes and share them with others.">
+    <meta property="og:url" content="https://yourwebsite.com">
+
+    <title>Advanced Random Quote Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f9a8d4, #90caf9);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+
+        canvas {
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    background: url('image copy.png');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: darken;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    margin-left: 55px;  /* Moves the canvas horizontally to the right */
+    width: 100%;
+    max-width: 1000px;
+    display: block;
+    height: auto;
+}
+
+
+
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .form-control {
+            margin-bottom: 10px;
+        }
+
+        .quote-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #333;
+            font-style: italic;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            line-height: 1.6;
+        }
+
+        .author-text {
+            font-size: 20px;
+            font-weight: normal;
+            color: #555;
+            text-align: right;
+            margin-top: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .developer {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 12px;
+            font-style: italic;
+            color: blue;
+        }
+
+        .validation-message {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+            }
+            canvas {
+                width: 90%;
+                height: auto;
+            }
+            .form-control {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <h1>Random Quote Generator</h1>
+        <div class="row mb-3">
+            <div class="col">
+                <input type="number" id="quoteCount" class="form-control" placeholder="Enter Number of Quotes" min="1">
+            </div>
+            <div class="col">
+                <select id="quoteType" class="form-control">
+                    <option value="all">All</option>
+                    <option value="love">Love</option>
+                    <option value="faith">Faith</option>
+                    <option value="family">Family</option>
+                    <option value="success">Success</option>
+                    <option value="life">Life</option>
+                    <option value="hope">Hope</option>
+                </select>
+            </div>
+        </div>
+        <div class="validation-message" id="validationMessage"></div>
+        <canvas id="quoteCanvas" width="1000" height="400"></canvas>
+        <div class="controls">
+            <button id="generate-quotes" class="btn btn-primary">Generate Quotes</button>
+            <a id="download-quote" class="btn btn-success" download="quote.png">Download Quote</a>
+            <a id="share-facebook" class="btn btn-secondary" target="_blank">Share on Facebook</a>
+            <a id="share-linkedin" class="btn btn-info" target="_blank">Share on LinkedIn</a>
+        </div>
+    </div>
+
+    <div class="developer">Developer: S.NKQAYINI</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+         const quotes = [
+            // Life Quotes
+            { text: "Your life is a gift, and it’s up to you to give it meaning", author: "Dr. Myles Munroe", category: "life" },
+            { text: "The greatest tragedy in life is not death, but a life without a purpose.", author: "Dr. Myles Munroe", category: "life" },
+            { text: "The purpose of life is to discover your purpose and then live it.", author: "Dr. Myles Munroe", category: "life" },
+
+            // Success Quotes
+            { text: "Success is not a destination, it’s a journey. You are successful when you are living your purpose", author: "Dr. Myles Munroe", category: "success" },
+            { text: "Success is not measured by what you accomplish, but by the impact you make in the lives of others.", author: "Dr. Myles Munroe", category: "success" },
+            { text: "The key to success is to focus on goals, not obstacles.", author: "Dr. Myles Munroe", category: "success" },
+
+            // Love Quotes
+            { text: "Love is not what you feel, it is what you do. Love is a choice and a decision, not a feeling.", author: "Dr. Myles Munroe", category: "love" },
+            { text: "Love without commitment is a shallow love; true love goes beyond feelings and is rooted in dedication", author: "Dr. Myles Munroe", category: "love" },
+            { text: "Love is the foundation of every successful relationship; it is the bond that holds families, friendships, and communities together.", author: "Dr. Myles Munroe", category: "love" },
+
+            // Faith Quotes
+            { text: "Faith is the ability to believe that what you hope for is already done, even when you don’t see it.", author: "Dr. Myles Munroe", category: "faith" },
+            { text: "Faith is not about what you believe in, but about what you do with what you believe.", author: "Dr. Myles Munroe", category: "faith" },
+            { text: "Faith is not an emotional feeling; it is a decision to trust and act on God's word, regardless of circumstances.", author: "Dr. Myles Munroe", category: "faith" },
+
+            // Family Quotes
+            { text: "A healthy family is the key to a successful life. When the family is in order, everything else will fall into place", author: "Dr. Myles Munroe", category: "family" },
+            { text: "A strong family creates a stable foundation for children to build their lives upon.", author: "Dr. Myles Munroe", category: "family" },
+            { text: "The strength of a family is not measured by the absence of problems, but by how they handle them together", author: "Dr. Myles Munroe", category: "family" },
+
+            // Hope Quotes
+            { text: "Hope is not just wishful thinking, it is the confident expectation that something better is coming.", author: "Dr. Myles Munroe", category: "hope" },
+            { text: "Hope is not just for today, it is for the future; it is the vision that helps you endure the present", author: "Dr. Myles Munroe", category: "hope" },
+            { text: "Hope is the belief that no matter how hard the journey, there is always a way forward.", author: "Dr. Myles Munroe", category: "hope" },
+        ];
+
+        const canvas = document.getElementById("quoteCanvas");
+        const ctx = canvas.getContext("2d");
+        const generateButton = document.getElementById("generate-quotes");
+        const quoteCountInput = document.getElementById("quoteCount");
+        const quoteTypeSelect = document.getElementById("quoteType");
+        const validationMessage = document.getElementById("validationMessage");
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = context.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, y);
+        }
+
+        function filterQuotes(category) {
+            return category === "all" ? quotes : quotes.filter(quote => quote.category === category);
+        }
+
+        function generateQuotes() {
+    const count = parseInt(quoteCountInput.value);
+    const type = quoteTypeSelect.value;
+
+    if (!count || !type) {
+        validationMessage.textContent = "Please select the number of quotes and a category first.";
+        return;
+    }
+
+    if (count > 3) {
+        validationMessage.textContent = "You can only generate a maximum of 3 quotes per choice.";
+        return;
+    }
+
+    const filteredQuotes = filterQuotes(type);
+    const randomQuotes = Array.from({ length: count }, () => {
+        const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+        return filteredQuotes[randomIndex];
+    });
+
+    validationMessage.textContent = '';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const img = new Image();
+    img.src = 'image copy.png';
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        let yPos = 50;
+        const maxWidth = canvas.width - 30;
+        randomQuotes.forEach((quote, index) => {
+            ctx.font = 'italic 20px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            wrapText(ctx, `- ${quote.author}`, canvas.width / 2, yPos, maxWidth, 25);
+            yPos += 30;
+
+            ctx.font = 'bold 26px Arial';
+            wrapText(ctx, `"${quote.text}"`, canvas.width / 2, yPos, maxWidth, 40);
+            yPos += 100;
+        });
+
+        // Create the quote text for social sharing
+        const quoteText = randomQuotes.map(q => `"${q.text}" - ${q.author}`).join("\n\n");
+
+        // URL encode the quote text
+        const encodedQuoteText = encodeURIComponent(quoteText);
+        const shareUrl = encodeURIComponent(`https://yourwebsite.com?quote=${encodedQuoteText}`);
+
+        // Update the download link
+        document.getElementById("download-quote").addEventListener("click", function() {
+            const link = document.createElement('a');
+            link.download = 'quote.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+
+        // Update the share links dynamically
+        document.getElementById("share-facebook").href = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
+        document.getElementById("share-linkedin").href = `https://www.linkedin.com/shareArticle?mini=true&url=${shareUrl}`;
+    }
+}
+
+
+        generateButton.addEventListener("click", generateQuotes);
+    </script>
+</body>
+</html>
