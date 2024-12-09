@@ -31,28 +31,27 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             position: relative;
+            text-align: center;
+            padding-bottom: 50px; /* Add some space at the bottom to avoid overlap */
         }
 
         canvas {
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    background: url('image copy.png');
-    background-size: cover;
-    background-position: center;
-    background-blend-mode: darken;
-    background-color: rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    margin-left: 55px;  /* Moves the canvas horizontally to the right */
-    width: 100%;
-    max-width: 1000px;
-    display: block;
-    height: auto;
-}
-
-
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: url('image copy.png');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: darken;
+            background-color: rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1000px;
+            display: block;
+            height: auto;
+        }
 
         .controls {
             margin-top: 20px;
@@ -82,12 +81,14 @@
         }
 
         .developer {
-            position: absolute;
-            bottom: 10px;
-            right: 20px;
             font-size: 12px;
             font-style: italic;
             color: blue;
+            position: absolute;
+            bottom: 20px; /* Position at the bottom */
+            width: 100%; /* Ensure it spans the width */
+            text-align: center;
+            padding: 10px 0;
         }
 
         .validation-message {
@@ -107,11 +108,48 @@
                 width: 100%;
                 margin: 5px 0;
             }
+            body {
+                padding-bottom: 100px; /* Ensure there's enough space for developer text */
+            }
+            .developer {
+                position: relative; /* Change position to relative on small screens */
+                padding-bottom: 0; /* Remove bottom padding to avoid overlap */
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .col {
+            margin: 5px;
+            max-width: 300px;
+            flex: 1;
+        }
+
+        .btn {
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="container text-center">
+    <div class="container">
         <h1>Random Quote Generator</h1>
         <div class="row mb-3">
             <div class="col">
